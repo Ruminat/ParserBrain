@@ -1,12 +1,12 @@
 import { getDataDir } from "../../lib/fs/utils";
 import { TParser } from "../../models/Parser/definitions";
 
-type TParserAction = "started-posting" | "downloaded-images" | "parsed-tags" | "uploaded-post";
+export type TParserAction = "started-posting" | "downloaded-images" | "parsed-tags" | "uploaded-post" | "finished";
 
 export type TParserActivityBody = {
   parser: TParser;
   action: TParserAction;
-}
+};
 
 type TParserActivity = TParserActivityBody & { time: number };
 

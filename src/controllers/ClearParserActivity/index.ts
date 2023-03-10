@@ -13,6 +13,6 @@ export class SendParserActivity {
       } catch (error) {
         res.json({ result: "ERROR", error });
       }
-    })
+    });
   }
 }

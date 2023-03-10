@@ -1,32 +1,20 @@
+import { config } from "dotenv";
 import { setUpExpressApp } from "./lib/express";
 import { appRoutes } from "./routes";
+import express = require("express");
+import TelegramBot = require("node-telegram-bot-api");
+import { telegramOnMessage } from "./telegram/onMessage";
 
-const express = require("express");
+config();
 
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN as string;
+
+const TELEGRAM_BOT = new TelegramBot(TOKEN, { polling: true });
 
 const app = express();
 
-setUpExpressApp(app);
+setUpExpressApp(app, PORT);
 appRoutes(app);
 
-app.listen(PORT, () => {
-  console.log(`
-    Server running on port ${PORT}
-  `);
-});
-
-// import TelegramBot from "node-telegram-bot-api";
-// import { config } from "dotenv";
-// import { onMessage } from "./listeners/onMessage/index.js";
-// import { helloMessage } from "./utils.js";
-
-// config();
-
-// const token = process.env.TELEGRAM_BOT_TOKEN as string;
-
-// const bot = new TelegramBot(token, { polling: true });
-
-// helloMessage();
-
-// onMessage(bot);
+telegramOnMessage(TELEGRAM_BOT);

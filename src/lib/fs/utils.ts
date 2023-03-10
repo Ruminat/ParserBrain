@@ -1,7 +1,6 @@
-import { writeFile, readFile as fsReadFile, access, constants } from "fs/promises";
 import { Buffer } from "buffer";
-
-const fs = require("fs");
+import { readFile as fsReadFile, writeFile } from "fs/promises";
+import fs = require("fs");
 
 export async function writeToFile(filePath: string, content: string, controller: AbortController) {
   const data = new Uint8Array(Buffer.from(content));
@@ -20,9 +19,6 @@ export async function readFile(filePath: string, controller: AbortController): P
 
 export function doesFileExist(filePath: string): boolean {
   return fs.existsSync(filePath);
-  // return access(filePath, constants.F_OK)
-  //   .then(() => true)
-  //   .catch(() => false);
 }
 
 const dataPath = "./data";
@@ -30,7 +26,7 @@ export function getDataDir(): string {
   return dataPath;
 }
 
-export async function createDataDirIfDoesntExist() {
+export async function createDataDirIfMissing() {
   if (fs.existsSync(dataPath)) return;
   fs.mkdirSync(dataPath);
 }
