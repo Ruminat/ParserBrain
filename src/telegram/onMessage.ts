@@ -1,4 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
+import { logInfo } from "../common/logging";
 import { getAllParsersActivitiesReply } from "./commands/getAllParsersActivitiesReply";
 import { getParsersActivitiesReply } from "./commands/getParsersActivitiesReply";
 import { getHelpReply } from "./commands/help";
@@ -16,11 +17,11 @@ export function telegramOnMessage(bot: TelegramBot): void {
     const fromPart = from ? `@${from.username} (${from.first_name} ${from.last_name}):` : `Unknown fool:`;
     const messageParsed = message.text ? message.text.toLowerCase().replace(/ё/g, "е") : message.text;
 
-    console.log(`${fromPart} ${message.text}`);
+    logInfo(`${fromPart} ${message.text}`);
 
     const reply = await getReply();
 
-    console.log(`@ParserBrainBot: ${reply}\n`);
+    logInfo(`@ParserBrainBot: ${reply}\n`);
 
     bot.sendMessage(chatId, reply, { parse_mode: "HTML" });
 

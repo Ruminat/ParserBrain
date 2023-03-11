@@ -21,8 +21,6 @@ export function getActivitiesLines(activities: TParserActivityStore, { filter = 
   filtered.sort((a, b) => a.time - b.time);
 
   for (const activity of filtered) {
-    if (!activity) continue;
-
     const { id, name, url } = activity.parser;
     const action = getActionLabel(activity.action);
     const nameAndUrl = `${name ? ` (${name})` : ""}${url ? ` (${url})` : ""}`;
