@@ -8,22 +8,19 @@ export function createJsonStorage<T>(params: { filePath: string; defaultValue: T
   const savedValue = readFileSync(filePath);
   let currentValue = savedValue ? JSON.parse(savedValue) : defaultValue;
 
+  const get = () => currentValue;
+
   const actualWrite = throttle(
-    async (content: string, abortController: AbortController) => writeToFile(filePath, content, abortController),
+    (abortController: AbortController) => writeToFile(filePath, JSON.stringify(get()), abortController),
     params.delay ?? seconds(3).toMs()
   );
 
-  return {
-    get: () => currentValue,
-
-    reset: async (abortController: AbortController) => {
-      currentValue = defaultValue;
-      await actualWrite(JSON.stringify(currentValue), abortController);
-    },
-
-    update: async (updateFn: (old: T) => T, abortController: AbortController) => {
-      currentValue = updateFn(currentValue);
-      await actualWrite(JSON.stringify(currentValue), abortController);
-    },
+  const update = (updateFn: (old: T) => T, abortController: AbortController) => {
+    currentValue = updateFn(get());
+    actualWrite(abortController);
   };
+
+  const reset = (abortController: AbortController) => update(() => defaultValue, abortController);
+
+  return { get, update, reset };
 }

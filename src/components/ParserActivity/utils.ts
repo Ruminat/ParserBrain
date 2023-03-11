@@ -1,29 +1,28 @@
-import { notEmpty } from "../../common/empty/utils";
+import { isEmpty } from "../../common/empty/utils";
 import { formatTimeAgo } from "../../lib/date/utils";
 import { TIME_AS_CHERT, TParserAction, TParserActivity, TParserActivityStore } from "./definitions";
 
-export function getActivitiesLines(activities: TParserActivityStore, { filter = true } = {}): string[] {
-  const result: string[] = [];
+type TGetActivitiesLinesParams = {
+  filterByTime?: boolean;
+  filterByLogin?: boolean;
+  login?: string;
+};
 
-  let i = 1;
-  const currentTime = Date.now();
+export function getActivitiesLines(activities: TParserActivityStore, params: TGetActivitiesLinesParams = {}): string[] {
+  const result: string[] = [];
 
   const allActivities = Object.values(activities);
 
-  const filtered = filter
-    ? (allActivities.filter((activity) => {
-        if (!activity) return false;
-        const diff = currentTime - activity.time;
-        return diff > TIME_AS_CHERT;
-      }) as TParserActivity[])
-    : allActivities.filter(notEmpty);
+  const filtered = filterActivities(allActivities, params);
 
+  // Sort from oldest to newest
   filtered.sort((a, b) => a.time - b.time);
 
+  let i = 1;
   for (const activity of filtered) {
     const { id, name, url } = activity.parser;
     const action = getActionLabel(activity.action);
-    const nameAndUrl = `${name ? ` (${name})` : ""}${url ? ` (${url})` : ""}`;
+    const nameAndUrl = `${!params.filterByLogin && name ? ` (${name})` : ""}${url ? ` (${url})` : ""}`;
     const parserText = `<code>${id}</code>${nameAndUrl} — ${action}`;
 
     const time = formatTimeAgo(activity.time);
@@ -35,6 +34,38 @@ export function getActivitiesLines(activities: TParserActivityStore, { filter = 
   }
 
   return result;
+}
+
+function filterActivities(
+  activities: (TParserActivity | undefined)[],
+  params: TGetActivitiesLinesParams
+): TParserActivity[] {
+  const currentTime = Date.now();
+
+  return activities.filter((activity) => {
+    if (isEmpty(activity)) return false;
+
+    if (params.filterByLogin && activity.parser.name) {
+      if (!params.login) return false;
+
+      const logins = extractLogins(activity.parser.name);
+
+      if (logins.every((login) => params.login !== login)) {
+        return false;
+      }
+    }
+
+    if (!params.filterByTime) {
+      return true;
+    }
+
+    const diff = currentTime - activity.time;
+    return diff > TIME_AS_CHERT;
+  }) as TParserActivity[];
+}
+
+function extractLogins(logins: string): string[] {
+  return logins.split(",").map((login) => login.trim().toLocaleLowerCase());
 }
 
 function paddedIndex(maxIndex: number, index: number): string {
@@ -58,6 +89,6 @@ function getActionLabel(action: TParserAction): string {
     case "uploaded-post":
       return "запостил";
     case "finished":
-      return "всё запостил";
+      return "закончил работу";
   }
 }

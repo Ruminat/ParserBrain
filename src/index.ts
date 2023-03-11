@@ -18,3 +18,10 @@ setUpExpressApp(app, PORT);
 appRoutes(app);
 
 telegramOnMessage(TELEGRAM_BOT);
+
+(function () {
+  const abortController = new AbortController();
+  if (abortController) {
+    console.log("  - AbortController is good");
+  }
+})();

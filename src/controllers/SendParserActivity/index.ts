@@ -2,7 +2,7 @@ import { updateParserActivity } from "../../components/ParserActivity";
 import { createApiPostController } from "../Common/apiPOST";
 
 export const sendParserActivityPOST = createApiPostController(async (req, res, abortController) => {
-  await updateParserActivity(req.body, abortController);
+  updateParserActivity(req.body, abortController);
 
   res.json({ result: "OK" });
 });

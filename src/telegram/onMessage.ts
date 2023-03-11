@@ -27,12 +27,12 @@ export function telegramOnMessage(bot: TelegramBot): void {
       if (!messageParsed || TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.HELP].includes(messageParsed)) {
         return getHelpReply();
       } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.ALL_ACTIVITIES].includes(messageParsed)) {
-        return getAllParsersActivitiesReply();
+        return getAllParsersActivitiesReply(message);
       } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.CHERTI_ACTIVITIES].includes(messageParsed)) {
-        return getParsersActivitiesReply();
+        return getParsersActivitiesReply(message);
       } else {
         bot.sendMessage(chatId, "Не понял, чего тебе надо, так что держи статус упырей", { parse_mode: "HTML" });
-        return getParsersActivitiesReply();
+        return getParsersActivitiesReply(message);
       }
     }
   });
