@@ -6,7 +6,7 @@ export async function getParsersActivitiesReply(abortController: AbortController
   const activities = await getParsersActivities(abortController);
 
   if (Object.values(activities).length === 0) {
-    return "Мне не известно ничего об этих грязных парсерах....";
+    return "Мне ничего не известно об этих грязных парсерах....";
   }
 
   const lines = getActivitiesLines(activities);
