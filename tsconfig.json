@@ -23,7 +23,7 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
 
-    "sourceMap": true,
+    "sourceMap": true
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/telegram/commands/getAllParsersActivitiesReply"]
 }

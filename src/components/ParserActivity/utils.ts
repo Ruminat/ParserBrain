@@ -1,12 +1,26 @@
+import { notEmpty } from "../../common/empty/utils";
 import { formatTimeAgo } from "../../lib/date/utils";
-import { TParserAction, TParserActivityStore } from "./definitions";
+import { TIME_AS_CHERT, TParserAction, TParserActivity, TParserActivityStore } from "./definitions";
 
-export function getActivitiesLines(activities: TParserActivityStore): string[] {
+export function getActivitiesLines(activities: TParserActivityStore, { filter = true } = {}): string[] {
   const result: string[] = [];
 
   let i = 1;
-  const jija = Object.values(activities);
-  for (const activity of jija) {
+  const currentTime = Date.now();
+
+  const allActivities = Object.values(activities);
+
+  const filtered = filter
+    ? (allActivities.filter((activity) => {
+        if (!activity) return false;
+        const diff = currentTime - activity.time;
+        return diff > TIME_AS_CHERT;
+      }) as TParserActivity[])
+    : allActivities.filter(notEmpty);
+
+  filtered.sort((a, b) => a.time - b.time);
+
+  for (const activity of filtered) {
     if (!activity) continue;
 
     const { id, name, url } = activity.parser;
@@ -16,7 +30,7 @@ export function getActivitiesLines(activities: TParserActivityStore): string[] {
 
     const time = formatTimeAgo(activity.time);
 
-    const prefix = `${paddedIndex(jija.length, i)}. `;
+    const prefix = `${paddedIndex(filtered.length, i)}. `;
     result.push(`${prefix}${parserText} (${time})`);
 
     i += 1;
