@@ -1,4 +1,5 @@
 import { ETelegramCommand, TELEGRAM_COMMAND_SYNONYMS } from "../definitions";
+import { b, code } from "../utils";
 
 const commands = [
   getCommand(ETelegramCommand.CHERTI_ACTIVITIES, "выводит статус парсеров-оболтусов,"),
@@ -18,12 +19,4 @@ function getCommand(command: ETelegramCommand, text: string): string {
   const labels = TELEGRAM_COMMAND_SYNONYMS[command];
   const label = labels[0];
   return `- ${code(label)} (${code(command)}) — ${text}\n    можно ещё так: (${labels.join(", ")})`;
-}
-
-function code(content: string): string {
-  return `<code>${content}</code>`;
-}
-
-function b(content: string): string {
-  return `<b>${content}</b>`;
 }
