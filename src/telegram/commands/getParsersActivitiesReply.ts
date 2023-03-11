@@ -2,8 +2,8 @@ import { notEmptyArray } from "../../common/empty/utils";
 import { getParsersActivities } from "../../components/ParserActivity";
 import { getActivitiesLines } from "../../components/ParserActivity/utils";
 
-export async function getParsersActivitiesReply(abortController: AbortController) {
-  const activities = await getParsersActivities(abortController);
+export function getParsersActivitiesReply() {
+  const activities = getParsersActivities();
 
   if (Object.values(activities).length === 0) {
     return "Мне ничего не известно об этих грязных парсерах....";

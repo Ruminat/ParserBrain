@@ -8,9 +8,7 @@ import { ETelegramCommand, TELEGRAM_COMMAND_SYNONYMS } from "./definitions";
 export function telegramOnMessage(bot: TelegramBot): void {
   console.log(`\n  - ParserBrainBot is listening...\n`);
 
-  bot.on("message", async (message) => {
-    const abortController = new AbortController();
-
+  bot.on("message", (message) => {
     const { from, chat } = message;
 
     const chatId = chat.id;
@@ -19,22 +17,22 @@ export function telegramOnMessage(bot: TelegramBot): void {
 
     logInfo(`${fromPart} ${message.text}`);
 
-    const reply = await getReply();
+    const reply = getReply();
 
     logInfo(`@ParserBrainBot: ${reply}\n`);
 
     bot.sendMessage(chatId, reply, { parse_mode: "HTML" });
 
-    async function getReply() {
+    function getReply() {
       if (!messageParsed || TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.HELP].includes(messageParsed)) {
         return getHelpReply();
       } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.ALL_ACTIVITIES].includes(messageParsed)) {
-        return getAllParsersActivitiesReply(abortController);
+        return getAllParsersActivitiesReply();
       } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.CHERTI_ACTIVITIES].includes(messageParsed)) {
-        return getParsersActivitiesReply(abortController);
+        return getParsersActivitiesReply();
       } else {
         bot.sendMessage(chatId, "Не понял, чего тебе надо, так что держи статус упырей", { parse_mode: "HTML" });
-        return getParsersActivitiesReply(abortController);
+        return getParsersActivitiesReply();
       }
     }
   });

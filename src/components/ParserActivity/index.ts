@@ -1,31 +1,36 @@
-import { readFile, writeToFile } from "../../lib/fs/utils";
+import produce from "immer";
+import { createJsonStorage } from "../../lib/json-storage";
 import { TParser } from "../../models/Parser/definitions";
 import { PARSER_ACTIVITY_FILE_PATH, TParserActivityBody, TParserActivityStore } from "./definitions";
 
+const storage = createJsonStorage<TParserActivityStore>({ filePath: PARSER_ACTIVITY_FILE_PATH, defaultValue: {} });
+
 export async function updateParserActivity(body: TParserActivityBody, abortController: AbortController): Promise<void> {
-  const newStore = await getParsersActivities(abortController);
-
-  newStore[body.parser.id] = { ...body, time: Date.now() };
-
-  await writeToFile(PARSER_ACTIVITY_FILE_PATH, JSON.stringify(newStore), abortController);
+  await storage.update(
+    (parsers) =>
+      produce(parsers, (draft) => {
+        draft[body.parser.id] = { ...body, time: Date.now() };
+      }),
+    abortController
+  );
 }
 
 export async function clearParsersActivities(ids: TParser["id"][], abortController: AbortController): Promise<void> {
-  const newStore = await getParsersActivities(abortController);
-
-  for (const id of ids) {
-    newStore[id] = undefined;
-  }
-
-  await writeToFile(PARSER_ACTIVITY_FILE_PATH, JSON.stringify(newStore), abortController);
+  await storage.update(
+    (parsers) =>
+      produce(parsers, (draft) => {
+        for (const id of ids) {
+          draft[id] = undefined;
+        }
+      }),
+    abortController
+  );
 }
 
 export async function clearAllParsersActivities(abortController: AbortController): Promise<void> {
-  await writeToFile(PARSER_ACTIVITY_FILE_PATH, JSON.stringify({}), abortController);
+  await storage.reset(abortController);
 }
 
-export async function getParsersActivities(abortController: AbortController): Promise<TParserActivityStore> {
-  const currentStore = await readFile(PARSER_ACTIVITY_FILE_PATH, abortController);
-
-  return currentStore ? JSON.parse(currentStore) : {};
+export function getParsersActivities(): TParserActivityStore {
+  return storage.get();
 }

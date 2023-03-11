@@ -18,13 +18,6 @@
       "excludedFiles": ["./**/*.spec.ts", "./node_modules/**/*"],
       "plugins": ["@typescript-eslint", "file-progress", "prettier"],
       "rules": {
-        "no-restricted-imports": [
-          "error",
-          {
-            "name": "lodash",
-            "message": "Use the 'lodash/functionName' instead."
-          }
-        ],
         "prettier/prettier": "warn",
         "max-len": ["error", { "code": 120, "ignoreStrings": true, "ignoreTemplateLiterals": true }],
         "comma-dangle": [

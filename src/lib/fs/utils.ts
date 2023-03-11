@@ -13,7 +13,15 @@ export async function readFile(filePath: string, controller: AbortController): P
   }
 
   const buffer = await fsReadFile(filePath, { signal: controller.signal });
+  return buffer.toString();
+}
 
+export function readFileSync(filePath: string): string | undefined {
+  if (!doesFileExist(filePath)) {
+    return undefined;
+  }
+
+  const buffer = fs.readFileSync(filePath);
   return buffer.toString();
 }
 

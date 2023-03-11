@@ -29,7 +29,7 @@ export function getActivitiesLines(activities: TParserActivityStore, { filter = 
     const time = formatTimeAgo(activity.time);
 
     const prefix = `${paddedIndex(filtered.length, i)}. `;
-    result.push(`${prefix}${parserText} (${time})`);
+    result.push(`${prefix}${parserText} ${time}`);
 
     i += 1;
   }
