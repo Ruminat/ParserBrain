@@ -1,22 +1,8 @@
-import { Express } from "express";
-import { saveParserActivity } from "../../components/ParserActivity";
+import { updateParserActivity } from "../../components/ParserActivity";
+import { createApiPostController } from "../Common/apiPOST";
 
-export class SendParserActivity {
-  public constructor(app: Express, path: string) {
-    app.post(path, (req, res) => {
-      try {
-        const abortController = new AbortController();
+export const sendParserActivityPOST = createApiPostController(async (req, res, abortController) => {
+  await updateParserActivity(req.body, abortController);
 
-        saveParserActivity(req.body, abortController)
-          .then(() => {
-            res.json({ result: "OK" });
-          })
-          .catch((error) => {
-            res.json({ result: "ERROR", error });
-          });
-      } catch (error) {
-        res.json({ result: "ERROR", error });
-      }
-    });
-  }
-}
+  res.json({ result: "OK" });
+});

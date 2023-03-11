@@ -23,7 +23,7 @@ export function telegramOnMessage(bot: TelegramBot): void {
     bot.sendMessage(chatId, reply, { parse_mode: "HTML" });
 
     async function getReply() {
-      if (!messageContent || ["/start", "/help"].includes(messageContent)) {
+      if (!messageContent || ["/start", "/help", "чё каво", "че каво"].includes(messageContent)) {
         return getHelpReply();
       } else {
         return getParsersActivityReply(abortController);

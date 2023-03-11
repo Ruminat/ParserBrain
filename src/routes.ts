@@ -1,11 +1,15 @@
 import { Express } from "express";
-import { GetParsersStatuses } from "./controllers/GetParsersStatuses";
-import { SendParserActivity } from "./controllers/SendParserActivity";
+import { clearAllParsersActivitiesPOST } from "./controllers/ClearAllParsersActivities";
+import { clearParsersActivitiesPOST } from "./controllers/ClearParsersActivities";
+import { getParsersStatusesGET } from "./controllers/GetParsersStatuses";
+import { sendParserActivityPOST } from "./controllers/SendParserActivity";
 
 export function appRoutes(app: Express): void {
   // GET
-  new GetParsersStatuses(app, "/get-parsers-statuses");
+  getParsersStatusesGET(app, "/api/get-parsers-statuses");
 
   // POST
-  new SendParserActivity(app, "/send-parser-activity");
+  clearAllParsersActivitiesPOST(app, "/api/clear-all-parsers-activities");
+  clearParsersActivitiesPOST(app, "/api/clear-parsers-activities");
+  sendParserActivityPOST(app, "/api/send-parser-activity");
 }

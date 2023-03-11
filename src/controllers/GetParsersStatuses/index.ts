@@ -1,18 +1,8 @@
-import { Express } from "express";
 import { getParserActivity } from "../../components/ParserActivity";
+import { createApiGetController } from "../Common/apiGET";
 
-export class GetParsersStatuses {
-  public constructor(app: Express, path: string) {
-    app.get(path, async (req, res) => {
-      try {
-        const abortController = new AbortController();
+export const getParsersStatusesGET = createApiGetController(async (req, res, abortController) => {
+  const activity = await getParserActivity(abortController);
 
-        const activity = await getParserActivity(abortController);
-
-        res.json({ result: activity });
-      } catch (error) {
-        res.json({ result: "ERROR", error });
-      }
-    });
-  }
-}
+  res.json({ result: activity });
+});
