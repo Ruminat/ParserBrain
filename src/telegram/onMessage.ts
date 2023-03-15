@@ -4,6 +4,7 @@ import { getAllParsersActivitiesReply } from "./commands/getAllParsersActivities
 import { getParsersActivitiesReply } from "./commands/getParsersActivitiesReply";
 import { getHelpReply } from "./commands/help";
 import { ETelegramCommand, TELEGRAM_COMMAND_SYNONYMS } from "./definitions";
+import { sendRicardoSticker, sendShrekSticker } from "./utils";
 
 export function telegramOnMessage(bot: TelegramBot): void {
   console.log(`\n  - ParserBrainBot is listening...\n`);
@@ -26,6 +27,12 @@ export function telegramOnMessage(bot: TelegramBot): void {
     function getReply() {
       if (!messageParsed || TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.HELP].includes(messageParsed)) {
         return getHelpReply();
+      } else if (messageParsed.includes("шрек") || messageParsed.includes("shrek")) {
+        sendShrekSticker(bot, chatId);
+        return "Кто-то сказал Шрек?! Ебу Алибабу! Не ожидал услышать!";
+      } else if (messageParsed.includes("балдеж")) {
+        sendRicardoSticker(bot, chatId);
+        return "Балдёж? Да это не просто балдёж — это ебать его мать чиллябинск нахуй!";
       } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.ALL_ACTIVITIES].includes(messageParsed)) {
         return getAllParsersActivitiesReply(message);
       } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.CHERTI_ACTIVITIES].includes(messageParsed)) {

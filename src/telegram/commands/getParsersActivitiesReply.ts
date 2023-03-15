@@ -15,7 +15,7 @@ export function getParsersActivitiesReply(message: TelegramBot.Message) {
     return b("Мне ничего не известно об этих грязных парсерах....");
   }
 
-  const lines = getActivitiesLines(activities, { filterByLogin: true, login: username });
+  const lines = getActivitiesLines(activities, { filterByTime: true, filterByLogin: true, login: username });
 
   if (notEmptyArray(lines)) {
     const title = b("Солнце ещё не село, а эти ниггеры уже не работают:");
