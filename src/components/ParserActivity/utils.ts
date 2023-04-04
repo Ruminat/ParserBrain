@@ -1,3 +1,4 @@
+import { groupBy } from "lodash";
 import { isEmpty } from "../../common/empty/utils";
 import { formatTimeAgo } from "../../lib/date/utils";
 import { TIME_AS_CHERT, TParserAction, TParserActivity, TParserActivityStore } from "./definitions";
@@ -17,6 +18,14 @@ export function getActivitiesLines(activities: TParserActivityStore, params: TGe
 
   // Sort from oldest to newest
   filtered.sort((a, b) => a.time - b.time);
+
+  if (!params.filterByLogin) {
+    const grouped = groupBy(filtered, (line) => line.parser.name);
+    const groupedLines = Object.entries(grouped).map(
+      ([logins, activities], i) => `${i + 1}. ${logins} — ${activities.length}`
+    );
+    return groupedLines;
+  }
 
   let i = 1;
   for (const activity of filtered) {
