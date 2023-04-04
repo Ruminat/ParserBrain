@@ -29,7 +29,7 @@ export function doesFileExist(filePath: string): boolean {
   return fs.existsSync(filePath);
 }
 
-const dataPath = "./data";
+const dataPath = process.env.DATA_DIR ?? "./data";
 export function getDataDir(): string {
   return dataPath;
 }

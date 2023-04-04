@@ -1,10 +1,9 @@
 import TelegramBot from "node-telegram-bot-api";
 import { logInfo } from "../common/logging";
-import { getAllParsersActivitiesReply } from "./commands/getAllParsersActivitiesReply";
-import { getParsersActivitiesReply } from "./commands/getParsersActivitiesReply";
 import { getHelpReply } from "./commands/help";
+import { getKekReply } from "./commands/kek";
+import { getParsersStatusReply } from "./commands/parsersStatus";
 import { ETelegramCommand, TELEGRAM_COMMAND_SYNONYMS } from "./definitions";
-import { sendRicardoSticker, sendShrekSticker } from "./utils";
 
 export function telegramOnMessage(bot: TelegramBot): void {
   console.log(`\n  - ParserBrainBot is listening...\n`);
@@ -16,31 +15,28 @@ export function telegramOnMessage(bot: TelegramBot): void {
     const fromPart = from ? `@${from.username} (${from.first_name} ${from.last_name}):` : `Unknown fool:`;
     const messageParsed = message.text ? message.text.toLowerCase().replace(/ё/g, "е") : message.text;
 
-    logInfo(`${fromPart} ${message.text}`);
+    try {
+      logInfo(`${fromPart} ${message.text}`);
 
-    const reply = getReply();
+      const reply = getReply();
 
-    logInfo(`@ParserBrainBot: ${reply}\n`);
+      logInfo(`@ParserBrainBot: ${reply}\n`);
 
-    bot.sendMessage(chatId, reply, { parse_mode: "HTML" });
+      bot.sendMessage(chatId, reply, { parse_mode: "HTML" });
 
-    function getReply() {
-      if (!messageParsed || TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.HELP].includes(messageParsed)) {
-        return getHelpReply();
-      } else if (messageParsed.includes("шрек") || messageParsed.includes("shrek")) {
-        sendShrekSticker(bot, chatId);
-        return "Кто-то сказал Шрек?! Ебу Алибабу! Не ожидал услышать!";
-      } else if (messageParsed.includes("балдеж")) {
-        sendRicardoSticker(bot, chatId);
-        return "Балдёж? Да это не просто балдёж — это ебать его мать чиллябинск нахуй!";
-      } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.ALL_ACTIVITIES].includes(messageParsed)) {
-        return getAllParsersActivitiesReply(message);
-      } else if (TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.CHERTI_ACTIVITIES].includes(messageParsed)) {
-        return getParsersActivitiesReply(message);
-      } else {
-        bot.sendMessage(chatId, "Не понял, чего тебе надо, так что держи статус упырей", { parse_mode: "HTML" });
-        return getParsersActivitiesReply(message);
+      function getReply() {
+        if (!messageParsed || TELEGRAM_COMMAND_SYNONYMS[ETelegramCommand.HELP].includes(messageParsed)) {
+          return getHelpReply();
+        }
+
+        const kek = getKekReply(bot, chatId, messageParsed);
+        if (kek) return kek;
+
+        return getParsersStatusReply(bot, chatId, message, messageParsed);
       }
+    } catch (error) {
+      console.log("PIZDA", error);
+      bot.sendMessage(chatId, "Что-то пошло не так...", { parse_mode: "HTML" });
     }
   });
 }

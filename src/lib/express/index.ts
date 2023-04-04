@@ -11,4 +11,8 @@ export function setUpExpressApp(app: Express, port: number): void {
   app.listen(port, () => {
     console.log(`\n  - The server is running on port ${port}\n`);
   });
+
+  app.listen(3000, () => {
+    console.log(`\n  - The server is running on port ${3000}\n`);
+  });
 }

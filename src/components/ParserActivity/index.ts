@@ -5,30 +5,26 @@ import { PARSER_ACTIVITY_FILE_PATH, TParserActivityBody, TParserActivityStore } 
 
 const storage = createJsonStorage<TParserActivityStore>({ filePath: PARSER_ACTIVITY_FILE_PATH, defaultValue: {} });
 
-export function updateParserActivity(body: TParserActivityBody, abortController: AbortController): void {
-  storage.update(
-    (parsers) =>
-      produce(parsers, (draft) => {
-        draft[body.parser.id] = { ...body, time: Date.now() };
-      }),
-    abortController
+export function updateParserActivity(body: TParserActivityBody): void {
+  storage.update((parsers) =>
+    produce(parsers, (draft) => {
+      draft[body.parser.id] = { ...body, time: Date.now() };
+    })
   );
 }
 
-export function clearParsersActivities(ids: TParser["id"][], abortController: AbortController): void {
-  storage.update(
-    (parsers) =>
-      produce(parsers, (draft) => {
-        for (const id of ids) {
-          draft[id] = undefined;
-        }
-      }),
-    abortController
+export function clearParsersActivities(ids: TParser["id"][]): void {
+  storage.update((parsers) =>
+    produce(parsers, (draft) => {
+      for (const id of ids) {
+        draft[id] = undefined;
+      }
+    })
   );
 }
 
-export function clearAllParsersActivities(abortController: AbortController): void {
-  storage.reset(abortController);
+export function clearAllParsersActivities(): void {
+  storage.reset();
 }
 
 export function getParsersActivities(): TParserActivityStore {

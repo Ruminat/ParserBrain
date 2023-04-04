@@ -1,15 +1,36 @@
 import { Express } from "express";
-import { clearAllParsersActivitiesPOST } from "./controllers/ClearAllParsersActivities";
-import { clearParsersActivitiesPOST } from "./controllers/ClearParsersActivities";
-import { getParsersStatusesGET } from "./controllers/GetParsersStatuses";
-import { sendParserActivityPOST } from "./controllers/SendParserActivity";
+import { setUpFrontend } from "./controllers/Frontend";
+import { getGlobalSettingsGET, updateGlobalSettingPOST } from "./controllers/GlobalSettings";
+import {
+  getParsersStatusesGET,
+  clearAllParsersActivitiesPOST,
+  clearParsersActivitiesPOST,
+  sendParserActivityPOST,
+  canIUseParserGET,
+} from "./controllers/ParsersStatuses";
+
+const PARSER_ROUTES = {
+  "/api/clear-all-parsers-activities": clearAllParsersActivitiesPOST,
+  "/api/clear-parsers-activities": clearParsersActivitiesPOST,
+  "/api/get-parsers-statuses": getParsersStatusesGET,
+  "/api/gbpltw": canIUseParserGET,
+  "/api/send-parser-activity": sendParserActivityPOST,
+};
+
+const GLOBAL_SETTINGS_ROUTES = {
+  "/api/get-global-settings": getGlobalSettingsGET,
+  "/api/update-global-setting": updateGlobalSettingPOST,
+};
+
+const ROUTES = {
+  ...PARSER_ROUTES,
+  ...GLOBAL_SETTINGS_ROUTES,
+};
 
 export function appRoutes(app: Express): void {
-  // GET
-  getParsersStatusesGET(app, "/api/get-parsers-statuses");
+  for (const [path, route] of Object.entries(ROUTES)) {
+    route(app, path);
+  }
 
-  // POST
-  clearAllParsersActivitiesPOST(app, "/api/clear-all-parsers-activities");
-  clearParsersActivitiesPOST(app, "/api/clear-parsers-activities");
-  sendParserActivityPOST(app, "/api/send-parser-activity");
+  setUpFrontend(app);
 }
